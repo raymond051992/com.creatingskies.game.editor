@@ -29,7 +29,7 @@ public class GameController extends TableViewController{
 	@FXML
 	@SuppressWarnings("unchecked")
 	public void initialize(){
-		super.initialize();
+		super.init();
 		GameDao gameDao = new GameDao();
 		
 		titleColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTitle()));

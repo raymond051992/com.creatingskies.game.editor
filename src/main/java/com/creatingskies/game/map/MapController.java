@@ -28,7 +28,7 @@ public class MapController extends TableViewController{
 	@FXML
 	@SuppressWarnings("unchecked")
 	public void initialize(){
-		super.initialize();
+		super.init();;
 		MapDao mapDao = new MapDao();
 		
 		nameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
@@ -40,6 +40,11 @@ public class MapController extends TableViewController{
 		
 		actionColumn.setCellFactory(generateCellFactory(Action.DELETE, Action.EDIT, Action.VIEW));
 		mapsTable.setItems(FXCollections.observableArrayList(mapDao.findAllMaps()));
+	}
+	
+	@FXML
+	private void createNew(){
+		new MapPropertiesController().show(Action.ADD, new Map());
 	}
 	
 	public void show(){
