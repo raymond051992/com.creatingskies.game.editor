@@ -6,7 +6,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
 
 import com.creatingskies.game.classes.PropertiesViewController;
-import com.creatingskies.game.classes.TableViewController.Action;
 import com.creatingskies.game.common.MainLayout;
 import com.creatingskies.game.core.Map;
 

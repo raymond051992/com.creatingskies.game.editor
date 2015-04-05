@@ -1,6 +1,5 @@
 package com.creatingskies.game.editor;
 
-import com.creatingskies.game.classes.TableViewController.Action;
 import com.creatingskies.game.classes.ViewController;
 import com.creatingskies.game.core.Game;
 
