@@ -33,10 +33,10 @@ public class MapController extends TableViewController{
 		
 		nameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
 		nameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDescription()));
-		widthColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
-				String.valueOf(cellData.getValue().getHorizontalTiles().size())));
-		heightColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
-				String.valueOf(cellData.getValue().getVerticalTiles().size())));
+//		widthColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
+//				String.valueOf(cellData.getValue().getHorizontalTiles().size())));
+//		heightColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
+//				String.valueOf(cellData.getValue().getVerticalTiles().size())));
 		
 		actionColumn.setCellFactory(generateCellFactory(Action.DELETE, Action.EDIT, Action.VIEW));
 		mapsTable.setItems(FXCollections.observableArrayList(mapDao.findAllMaps()));
