@@ -23,8 +23,7 @@ public class GameController extends TableViewController{
 	@FXML private TableColumn<Game, String> titleColumn;
 	@FXML private TableColumn<Game, String> descriptionColumn;
 	@FXML private TableColumn<Game, String> typeColumn;
-	@FXML private TableColumn<Game, String> widthColumn;
-	@FXML private TableColumn<Game, String> heightColumn;
+	@FXML private TableColumn<Game, String> mapColumn;
 	@FXML private TableColumn<User, Object> actionColumn;
 	
 	@FXML
@@ -36,10 +35,7 @@ public class GameController extends TableViewController{
 		titleColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTitle()));
 		descriptionColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDescription()));
 		typeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getType().toString()));
-		widthColumn.setCellValueFactory(
-				cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getHorizontalTiles().size())));
-		heightColumn.setCellValueFactory(
-				cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getVerticalTiles().size())));
+		mapColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMap().getName()));
 		
 		actionColumn.setCellFactory(generateCellFactory(Action.DELETE, Action.EDIT, Action.VIEW));
 		gamesTable.setItems(FXCollections.observableArrayList(gameDao.findAllGames()));
