@@ -48,7 +48,7 @@
       <ButtonBar layoutX="586.0" layoutY="546.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
         <buttons>
           <Button mnemonicParsing="false" onAction="#okButtonClicked" styleClass="button-primary" text="Ok" />
-            <Button mnemonicParsing="false" styleClass="button-default" text="Cancel" />
+            <Button mnemonicParsing="false" onAction="#cancelButtonClicked" styleClass="button-default" text="Cancel" />
         </buttons>
       </ButtonBar>
       <Label id="viewTitle" fx:id="viewTitle" layoutX="14.0" layoutY="14.0" text="Label" />

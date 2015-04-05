@@ -49,8 +49,8 @@
       <ButtonBar layoutX="158.0" layoutY="343.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="43.0" prefWidth="432.0" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
         <buttons>
           <Button fx:id="openDesignerButton" maxWidth="150.0" minHeight="-Infinity" minWidth="150.0" mnemonicParsing="false" onAction="#showMapDesigner" prefWidth="150.0" styleClass="button-primary" text="Map Designer" />
-            <Button fx:id="saveButton" maxWidth="100.0" minWidth="100.0" mnemonicParsing="false" prefWidth="100.0" styleClass="button-primary" text="Save" />
-            <Button fx:id="cancelButton" maxWidth="100.0" minWidth="100.0" mnemonicParsing="false" prefWidth="100.0" styleClass="button-default" text="Cancel" />
+            <Button fx:id="saveButton" maxWidth="100.0" minWidth="100.0" mnemonicParsing="false" onAction="#save" prefWidth="100.0" styleClass="button-primary" text="Save" />
+            <Button fx:id="cancelButton" maxWidth="100.0" minWidth="100.0" mnemonicParsing="false" onAction="#cancel" prefWidth="100.0" styleClass="button-default" text="Cancel" />
         </buttons>
       </ButtonBar>
    </children>

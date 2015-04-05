@@ -20,6 +20,7 @@ import com.creatingskies.game.classes.PropertiesViewController;
 import com.creatingskies.game.common.AlertDialog;
 import com.creatingskies.game.common.MainLayout;
 import com.creatingskies.game.core.Map;
+import com.creatingskies.game.core.MapDao;
 import com.creatingskies.game.core.Tile;
 
 public class MapPropertiesController extends PropertiesViewController{
@@ -74,13 +75,106 @@ public class MapPropertiesController extends PropertiesViewController{
         });
 	}
 	
+	@FXML
+	private void showMapDesigner(){
+		if(isValidDetails()){
+			setDetails();
+			new MapDesignerController().show(getCurrentAction(),getMap());
+		}
+	}
+	
+	private boolean isValidDetails(){
+		if(nameTextField.getText().isEmpty()){
+			new AlertDialog(AlertType.ERROR, "Oops", "", "Name is required.").showAndWait();
+			return false;
+		}
+		if(descriptionTextField.getText().isEmpty()){
+			new AlertDialog(AlertType.ERROR, "Oops", "", "Description is required.").showAndWait();
+			return false;
+		}
+		if(widthTextField.getText().isEmpty()){
+			new AlertDialog(AlertType.ERROR, "Oops", "", "Width is required.").showAndWait();
+			return false;
+		}
+		if(heightTextField.getText().isEmpty()){
+			new AlertDialog(AlertType.ERROR, "Oops", "", "Height is required.").showAndWait();
+			return false;
+		}
+		if(Integer.parseInt(widthTextField.getText()) <= 0){
+			new AlertDialog(AlertType.ERROR, "Oops", "", "Width should be 1 or greater.").showAndWait();
+			return false;
+		}
+		if(Integer.parseInt(heightTextField.getText()) <= 0){
+			new AlertDialog(AlertType.ERROR, "Oops", "", "Height should be 1 or greater.").showAndWait();
+			return false;
+		}
+			
+		return true;
+	}
+	
+	private Boolean isValidMap(){
+		if(getMap().getTiles() == null || (getMap().getTiles() != null && getMap().getTiles().isEmpty())){
+			new AlertDialog(AlertType.ERROR, "Oops", "", "Please design your map.").showAndWait();
+			return false;
+		}
+		if(getMap().getStartPoint() == null){
+			new AlertDialog(AlertType.ERROR, "Oops", "", "Please assign start point to the map.").showAndWait();
+			return false;
+		}
+		if(getMap().getEndPoint() == null){
+			new AlertDialog(AlertType.ERROR, "Oops", "", "Please assign an end point to the map.").showAndWait();
+			return false;
+		}
+		
+		return true;
+	}
+	
+	private void setDetails(){
+		getMap().setName(nameTextField.getText());
+		getMap().setDescription(descriptionTextField.getText());
+		Integer width = Integer.parseInt(widthTextField.getText());
+		Integer height = Integer.parseInt(heightTextField.getText());
+		
+		List<Tile> tiles = new ArrayList<Tile>();
+		for(int r = 0;r < height;r++){
+			for(int c = 0;c < width;c++){
+				Tile tile = new Tile();
+				tile.setMap(getMap());
+				tile.setColIndex(c);
+				tile.setRowIndex(r);
+				tile.setObstacle(false);
+				tiles.add(tile);
+			}
+		}
+		
+		getMap().setTiles(tiles);
+	}
+	
+	
+	
+	@FXML
+	private void save(){
+		if(isValidDetails() && isValidMap()){
+			MapDao mapDao = new MapDao();
+			if(getCurrentAction() == Action.ADD){
+				mapDao.save(getMap());
+			}else if(getCurrentAction() == Action.EDIT){
+				mapDao.saveOrUpdate(getMap());
+			}
+		}
+	}
+	
+	@FXML 
+	private void cancel(){
+		close();
+	}
+	
 	private Map getMap(){
 		return (Map) getCurrentRecord();
 	}
 	
 	@Override
 	protected String getViewTitle() {
-		System.out.println(getCurrentAction());
 		if(getCurrentAction() == Action.ADD){
 			return "Create New Map";
 		}else if (getCurrentAction() == Action.EDIT){
@@ -104,56 +198,6 @@ public class MapPropertiesController extends PropertiesViewController{
         } catch (IOException e) {
             e.printStackTrace();
         }
-	}
-	
-	@FXML
-	private void showMapDesigner(){
-		if(isValid()){
-			updateMapDetail();
-			new MapDesignerController().show(getMap());
-		}
-	}
-	
-	private boolean isValid(){
-		if(nameTextField.getText().isEmpty()){
-			new AlertDialog(AlertType.ERROR, "Oops", "", "Name is required.").showAndWait();
-			return false;
-		}
-		if(descriptionTextField.getText().isEmpty()){
-			new AlertDialog(AlertType.ERROR, "Oops", "", "Description is required.").showAndWait();
-			return false;
-		}
-		if(widthTextField.getText().isEmpty()){
-			new AlertDialog(AlertType.ERROR, "Oops", "", "Width is required.").showAndWait();
-			return false;
-		}
-		if(heightTextField.getText().isEmpty()){
-			new AlertDialog(AlertType.ERROR, "Oops", "", "Height is required.").showAndWait();
-			return false;
-		}
-			
-		return true;
-	}
-	
-	private void updateMapDetail(){
-		getMap().setName(nameTextField.getText());
-		getMap().setDescription(descriptionTextField.getText());
-		Integer width = Integer.parseInt(widthTextField.getText());
-		Integer height = Integer.parseInt(heightTextField.getText());
-		
-		List<Tile> tiles = new ArrayList<Tile>();
-		for(int r = 0;r < height;r++){
-			for(int c = 0;c < width;c++){
-				Tile tile = new Tile();
-				tile.setMap(getMap());
-				tile.setColIndex(c);
-				tile.setRowIndex(r);
-				tile.setObstacle(false);
-				tiles.add(tile);
-			}
-		}
-		
-		getMap().setTiles(tiles);
 	}
 }
 

@@ -17,11 +17,13 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import com.creatingskies.game.classes.ViewController.Action;
 import com.creatingskies.game.common.MainLayout;
 import com.creatingskies.game.core.Map;
 import com.creatingskies.game.core.Tile;
 
 public class MapDesignerController {
+	
 	
 	@FXML private Label viewTitle;
 	@FXML private GridPane mapTiles;
@@ -31,9 +33,11 @@ public class MapDesignerController {
 	private Image selectedImage = 
 			new Image(MainLayout.class.getResourceAsStream("/images/tiles/stone_little_bricks.jpg"),48,48,true,true);
 	
+	private Action currentAction;
+	
 	public void init(){
 		mapTiles.getChildren().clear();
-		mapTiles.getChildren().removeAll(mapTiles.getChildren());
+		
 		for(Tile tile : map.getTiles()){
 			ImageView image = new ImageView(
 					new Image(MainLayout.class.getResourceAsStream("/images/tiles/grass.jpg"),48,48,true,true));
@@ -42,17 +46,19 @@ public class MapDesignerController {
 			
 			mapTiles.add(tilePane, tile.getColIndex(), tile.getRowIndex());
 			
+			
 			tilePane.setOnMouseClicked(new EventHandler<MouseEvent>() {
 				@Override
 				public void handle(MouseEvent event) {
-					image.setImage(selectedImage);
-					System.out.println("c = "+ tile.getColIndex() +" : "+" r = "+ tile.getRowIndex());
+					if(getCurrentAction() != null){
+						image.setImage(selectedImage);
+					}
 				}
 			});
 		}
 	}
 	
-	public void show(Map map){
+	public void show(Action action, Map map){
 		try{
 			FXMLLoader loader = new FXMLLoader();
 	        loader.setLocation(getClass().getResource("Designer.fxml"));
@@ -72,6 +78,7 @@ public class MapDesignerController {
 	        controller.setMap(map);
 	        controller.setStage(stage);
 	        controller.setViewTitle("Edit " + map.getName());
+	        controller.setCurrentAction(action);
 	        controller.init();
 	        stage.showAndWait();
 		}catch(IOException e){
@@ -81,6 +88,11 @@ public class MapDesignerController {
 	
 	@FXML
 	private void okButtonClicked(){
+		stage.close();
+	}
+	
+	@FXML
+	private void cancelButtonClicked(){
 		stage.close();
 	}
 	
@@ -98,5 +110,13 @@ public class MapDesignerController {
 	
 	public void setViewTitle(String title){
 		viewTitle.setText(title);
+	}
+	
+	public Action getCurrentAction() {
+		return currentAction;
+	}
+	
+	public void setCurrentAction(Action currentAction) {
+		this.currentAction = currentAction;
 	}
 }
