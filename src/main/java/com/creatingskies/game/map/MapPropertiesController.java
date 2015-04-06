@@ -37,7 +37,25 @@ public class MapPropertiesController extends PropertiesViewController{
 	@Override
 	public void init() {
 		super.init();
-		
+		initWidthAndHeightTextFieldKeyValidation();
+		initFields();
+	}
+	
+	private void initFields(){
+		if(getMap() != null){
+			nameTextField.setText(getMap().getName());
+			descriptionTextField.setText(getMap().getDescription());
+			if(getMap().getWidth() != null){
+				widthTextField.setText(String.valueOf(getMap().getWidth()));
+			}
+			if(getMap().getHeight() != null){
+				heightTextField.setText(String.valueOf(getMap().getHeight()));
+			}
+			
+		}
+	}
+	
+	private void initWidthAndHeightTextFieldKeyValidation(){
 		widthTextField.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
@@ -78,8 +96,9 @@ public class MapPropertiesController extends PropertiesViewController{
 	@FXML
 	private void showMapDesigner(){
 		if(isValidDetails()){
-			setDetails();
+			mapDetails();
 			new MapDesignerController().show(getCurrentAction(),getMap());
+			close();
 		}
 	}
 	
@@ -129,25 +148,27 @@ public class MapPropertiesController extends PropertiesViewController{
 		return true;
 	}
 	
-	private void setDetails(){
-		getMap().setName(nameTextField.getText());
-		getMap().setDescription(descriptionTextField.getText());
-		Integer width = Integer.parseInt(widthTextField.getText());
-		Integer height = Integer.parseInt(heightTextField.getText());
-		
-		List<Tile> tiles = new ArrayList<Tile>();
-		for(int r = 0;r < height;r++){
-			for(int c = 0;c < width;c++){
-				Tile tile = new Tile();
-				tile.setMap(getMap());
-				tile.setColIndex(c);
-				tile.setRowIndex(r);
-				tile.setObstacle(false);
-				tiles.add(tile);
+	private void mapDetails(){
+		if(!getMap().isReady()){
+			getMap().setName(nameTextField.getText());
+			getMap().setDescription(descriptionTextField.getText());
+			getMap().setWidth(Integer.parseInt(widthTextField.getText()));
+			getMap().setHeight(Integer.parseInt(heightTextField.getText()));
+			
+			List<Tile> tiles = new ArrayList<Tile>();
+			for(int r = 0;r < getMap().getHeight();r++){
+				for(int c = 0;c < getMap().getWidth();c++){
+					Tile tile = new Tile();
+					tile.setMap(getMap());
+					tile.setColIndex(c);
+					tile.setRowIndex(r);
+					tile.setObstacle(false);
+					tiles.add(tile);
+				}
 			}
+			
+			getMap().setTiles(tiles);
 		}
-		
-		getMap().setTiles(tiles);
 	}
 	
 	
@@ -199,5 +220,7 @@ public class MapPropertiesController extends PropertiesViewController{
             e.printStackTrace();
         }
 	}
+	
+	
 }
 
