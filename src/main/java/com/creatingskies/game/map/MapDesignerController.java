@@ -8,9 +8,12 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.SplitPane;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -34,15 +37,19 @@ import com.creatingskies.game.model.Constant;
 
 public class MapDesignerController {
 	
+	@FXML private SplitPane mapDesignerContainer;
 	@FXML private Label viewTitle;
 	@FXML private GridPane mapTiles;
 	@FXML private FlowPane tileImageSelections;
 	@FXML private ImageView selectedTileImageView;
+	@FXML private ImageView selectedMapTileImageView;
 	@FXML private Label selectedTileLocX;
 	@FXML private Label selectedTileLocY;
 	@FXML private CheckBox selectedTileIsStartPoint;
 	@FXML private CheckBox selectedTileIsEndPoint;
 	@FXML private CheckBox selectedTileIsObstacle;
+	@FXML private Button saveButton;
+	@FXML private Button cancelButton;
 	
 	private Map map;
 	private Stage stage;
@@ -54,6 +61,14 @@ public class MapDesignerController {
 	public void init(){
 		initMapTiles();
 		initTileImageSelections();
+		
+		mapDesignerContainer.setDisable(getCurrentAction() == Action.VIEW);
+		saveButton.setVisible(getCurrentAction() != Action.VIEW);
+		if(getCurrentAction() == Action.VIEW){
+			cancelButton.setText("Ok");
+		}else{
+			cancelButton.setText("Cancel");
+		}
 	}
 	
 	private void initMapTiles(){
@@ -64,10 +79,8 @@ public class MapDesignerController {
 			imageView.setFitWidth(Constant.tILE_WIDTH);
 			imageView.setImage(Util.byteArrayToImage(tile.getImage()));
 			Pane tilePane = new Pane(imageView);
-			tilePane.setStyle("-fx-border-color:#375a7f;-fx-border-width:0.5;-fx-background-color:white;");
-			
+			tilePane.getStyleClass().add("map-designer-tile");
 			mapTiles.add(tilePane, tile.getColIndex(), tile.getRowIndex());
-			
 			
 			tilePane.setOnMouseClicked(new EventHandler<MouseEvent>() {
 				@Override
@@ -77,7 +90,9 @@ public class MapDesignerController {
 							imageView.setImage(selectedTileImageView.getImage());
 							tile.setImage(selectedTileImage.getImage());
 						}
+						
 						selectedTile = tile;
+						selectedMapTileImageView = imageView;
 						selectedTileLocX.setText(String.valueOf(tile.getRowIndex()));
 						selectedTileLocY.setText(String.valueOf(tile.getColIndex()));
 						selectedTileIsStartPoint.setSelected(tile.getStartPoint());
@@ -93,6 +108,7 @@ public class MapDesignerController {
 		tileImageSelections.getChildren().clear();
 		MapDao mapDao = new MapDao();
 		List<TileImage> tileImages = mapDao.findAllTileImages();
+		addTileImageSelection(new TileImage());
 		if(tileImages != null && !tileImages.isEmpty()){
 			for(TileImage tileImage : tileImages){
 				addTileImageSelection(tileImage);
@@ -105,6 +121,10 @@ public class MapDesignerController {
 		imageView.setFitHeight(Constant.TILE_HEIGHT);
 		imageView.setFitWidth(Constant.tILE_WIDTH);
 		Pane pane = new Pane(imageView);
+		
+		if(imageView.getImage() == null){
+			pane.getStyleClass().add("map-blank-tile");
+		}
 		
 		pane.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
@@ -136,7 +156,8 @@ public class MapDesignerController {
 	        MapDesignerController controller = (MapDesignerController) loader.getController();
 	        controller.setMap(map);
 	        controller.setStage(stage);
-	        controller.setViewTitle("Edit " + map.getName());
+        	controller.setViewTitle(map.getName());
+	        
 	        controller.setCurrentAction(action);
 	        controller.init();
 	        stage.showAndWait();
@@ -174,7 +195,17 @@ public class MapDesignerController {
 		if(tile != null){
 			tile.setStartPoint(false);
 		}else {
-			selectedTile.setStartPoint(selectedTileIsStartPoint.isSelected());
+			if(selectedTileIsStartPoint.isSelected()){
+				selectedTile.setStartPoint(true);
+				
+				Image image = new Image(Constant.PATH_TILE_IMAGE_START_POINT);
+				selectedTile.setImage(Util.imageToByteArray(image, "png"));
+				selectedMapTileImageView.setImage(image);
+			}else{
+				selectedTile.setStartPoint(false);
+				selectedTile.setImage(null);
+				selectedMapTileImageView.setImage(selectedTileImageView.getImage());
+			}
 		}
 	}
 	
@@ -184,12 +215,21 @@ public class MapDesignerController {
 		if(tile != null){
 			tile.setEndPoint(false);
 		}else {
-			selectedTile.setEndPoint(selectedTileIsEndPoint.isSelected());
+			if(selectedTileIsEndPoint.isSelected()){
+				selectedTile.setEndPoint(true);
+				Image image = new Image(Constant.PATH_TILE_IMAGE_END_POINT);
+				selectedTile.setImage(Util.imageToByteArray(image, "png"));
+				selectedMapTileImageView.setImage(image);
+			}else{
+				selectedTile.setEndPoint(false);
+				selectedTile.setImage(null);
+				selectedMapTileImageView.setImage(selectedTileImageView.getImage());
+			}
 		}
 	}
 	
 	@FXML
-	private void okButtonClicked(){
+	private void saveButtonClicked(){
 		if(map.getStartPoint() == null || map.getEndPoint() == null){
 			new AlertDialog(AlertType.ERROR, "Invalid Map", null, "Map should have 1 start point and 1 end point.",stage).showAndWait();
 		}else{

@@ -33,18 +33,24 @@ public class MapController extends TableViewController{
 		
 		nameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
 		nameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDescription()));
-//		widthColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
-//				String.valueOf(cellData.getValue().getHorizontalTiles().size())));
-//		heightColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
-//				String.valueOf(cellData.getValue().getVerticalTiles().size())));
+		widthColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
+				String.valueOf(cellData.getValue().getWidth())));
+		heightColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
+				String.valueOf(cellData.getValue().getHeight())));
 		
-		actionColumn.setCellFactory(generateCellFactory(Action.DELETE, Action.EDIT, Action.VIEW));
+		actionColumn.setCellFactory(generateCellFactory(Action.EDIT, Action.VIEW));
 		mapsTable.setItems(FXCollections.observableArrayList(mapDao.findAllMaps()));
 	}
 	
 	@FXML
 	private void createNew(){
 		new MapPropertiesController().show(Action.ADD, new Map());
+	}
+	
+	@Override
+	protected void viewRecord(IRecord record) {
+		Map map = new MapDao().findMapWithDetails(record.getIdNo());
+		new MapPropertiesController().show(Action.VIEW, map);
 	}
 	
 	public void show(){

@@ -9,12 +9,15 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Modality;
 
 import com.creatingskies.game.classes.PropertiesViewController;
 import com.creatingskies.game.common.AlertDialog;
@@ -25,6 +28,7 @@ import com.creatingskies.game.core.Tile;
 
 public class MapPropertiesController extends PropertiesViewController{
 	
+	@FXML private GridPane fieldContainer;
 	@FXML private TextField nameTextField;
 	@FXML private TextArea descriptionTextField;
 	@FXML private TextField widthTextField;
@@ -39,6 +43,15 @@ public class MapPropertiesController extends PropertiesViewController{
 		super.init();
 		initWidthAndHeightTextFieldKeyValidation();
 		initFields();
+		
+		fieldContainer.setDisable(getCurrentAction() == Action.VIEW);
+		saveButton.setVisible(getCurrentAction() != Action.VIEW);
+		
+		if(getCurrentAction() == Action.VIEW){
+			cancelButton.setText("Ok");
+		}else{
+			cancelButton.setText("Cancel");
+		}
 	}
 	
 	private void initFields(){
@@ -176,18 +189,25 @@ public class MapPropertiesController extends PropertiesViewController{
 	@FXML
 	private void save(){
 		if(isValidDetails() && isValidMap()){
+			Alert waitDialog = new AlertDialog(AlertType.INFORMATION, "Saving", null, "Please wait.");
+			waitDialog.initModality(Modality.WINDOW_MODAL);
+			waitDialog.show();
 			MapDao mapDao = new MapDao();
 			if(getCurrentAction() == Action.ADD){
 				mapDao.save(getMap());
 			}else if(getCurrentAction() == Action.EDIT){
 				mapDao.saveOrUpdate(getMap());
 			}
+			waitDialog.hide();
+			close();
+			new MapController().show();
 		}
 	}
 	
 	@FXML 
 	private void cancel(){
 		close();
+		new MapController().show();
 	}
 	
 	private Map getMap(){
