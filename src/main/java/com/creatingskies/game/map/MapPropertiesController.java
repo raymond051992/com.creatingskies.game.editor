@@ -192,12 +192,7 @@ public class MapPropertiesController extends PropertiesViewController{
 			Alert waitDialog = new AlertDialog(AlertType.INFORMATION, "Saving", null, "Please wait.");
 			waitDialog.initModality(Modality.WINDOW_MODAL);
 			waitDialog.show();
-			MapDao mapDao = new MapDao();
-			if(getCurrentAction() == Action.ADD){
-				mapDao.save(getMap());
-			}else if(getCurrentAction() == Action.EDIT){
-				mapDao.saveOrUpdate(getMap());
-			}
+			new MapDao().saveOrUpdate(getMap());
 			waitDialog.hide();
 			close();
 			new MapController().show();

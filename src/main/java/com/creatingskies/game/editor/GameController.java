@@ -53,6 +53,20 @@ public class GameController extends TableViewController{
 	}
 	
 	@Override
+	protected void viewRecord(IRecord record) {
+		new GamePropertiesController().show(Action.VIEW, (Game) record);
+	}
+	
+	@Override
+	protected void editRecord(IRecord record) {
+		new GamePropertiesController().show(Action.EDIT, (Game) record);
+	}
+	
+	public void addNewGame(){
+		new GamePropertiesController().show(Action.ADD, new Game());
+	}
+	
+	@Override
 	public TableView<? extends IRecord> getTableView() {
 		return gamesTable;
 	}
