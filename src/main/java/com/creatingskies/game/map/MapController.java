@@ -32,7 +32,7 @@ public class MapController extends TableViewController{
 		MapDao mapDao = new MapDao();
 		
 		nameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
-		nameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDescription()));
+		descriptionColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDescription()));
 		widthColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
 				String.valueOf(cellData.getValue().getWidth())));
 		heightColumn.setCellValueFactory(cellData -> new SimpleStringProperty(

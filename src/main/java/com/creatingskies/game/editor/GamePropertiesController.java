@@ -10,15 +10,13 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import javafx.util.Callback;
+import javafx.util.StringConverter;
 
 import com.creatingskies.game.classes.PropertiesViewController;
 import com.creatingskies.game.classes.Util;
@@ -76,30 +74,18 @@ public class GamePropertiesController extends PropertiesViewController{
 	private void initMapSelections(){
 		MapDao mapDao = new MapDao();
 		mapSelectionDropdown.setItems(FXCollections.observableArrayList(mapDao.findAllMaps()));
-		mapSelectionDropdown.setCellFactory(new Callback<ListView<Map>,ListCell<Map>>(){
-            @Override
-            public ListCell<Map> call(ListView<Map> p) {
-                 
-                final ListCell<Map> cell = new ListCell<Map>(){
- 
-                    @Override
-                    protected void updateItem(Map t, boolean bln) {
-                        super.updateItem(t, bln);
-                         
-                        if(t != null){
-                            setText(t.getName());
-                        }else{
-                            setText(null);
-                        }
-                    }
-  
-                };
-                return cell;
-            }
-        });
+		mapSelectionDropdown.setConverter(new StringConverter<Map>() {
+			@Override
+			public String toString(Map object) {
+				return object.getName();
+			}
+			
+			@Override
+			public Map fromString(String string) {
+				return null;
+			}
+		});
 	}
-	
-	
 	
 	@FXML
     private void handleAudioBrowseDialog(){
@@ -114,7 +100,7 @@ public class GamePropertiesController extends PropertiesViewController{
         if(file != null){
         	getGame().setAudio(Util.fileToByteArray(file));
 	        getGame().setAudioFileName(file.getName());
-	        getGame().setAudioFileType(file.getName());
+	        getGame().setAudioFileType(Util.getFileExtension(file.getName()));
 	        getGame().setAudioFileSize(file.length());
 	        audioFileNameField.setText(file.getName());
         }
@@ -175,13 +161,14 @@ public class GamePropertiesController extends PropertiesViewController{
 	
 	private void setGame(Game game){
 		setCurrentRecord(game);
-		titleField.setText(game.getTitle());
-		descriptionField.setText(game.getDescription());
-		if(game.getType() == Type.CYCLING){
-			gameTypeCyclingButton.setSelected(true);
-		}else{
-			gameTypeRowingButton.setSelected(false);
+		titleField.setText(getGame().getTitle());
+		descriptionField.setText(getGame().getDescription());
+		
+		if(getGame().getType() == null){
+			getGame().setType(Type.CYCLING);
 		}
+		
+		gameTypeCyclingButton.setSelected(game.getType() == Type.CYCLING);
 	}
 	
 	public void show(Action action, Game game){

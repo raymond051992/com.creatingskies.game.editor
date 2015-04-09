@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -48,7 +46,7 @@ public class MapPropertiesController extends PropertiesViewController{
 		saveButton.setVisible(getCurrentAction() != Action.VIEW);
 		
 		if(getCurrentAction() == Action.VIEW){
-			cancelButton.setText("Ok");
+			cancelButton.setText("OK");
 		}else{
 			cancelButton.setText("Cancel");
 		}
@@ -77,15 +75,6 @@ public class MapPropertiesController extends PropertiesViewController{
                 }
             }
         });
-		widthTextField.textProperty().addListener(new ChangeListener<String>() {
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                try {
-                    Integer.parseInt(newValue);
-                } catch (Exception e) {
-                	widthTextField.setText(oldValue);
-               }
-            }
-        });
 		
 		heightTextField.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
             @Override
@@ -93,15 +82,6 @@ public class MapPropertiesController extends PropertiesViewController{
                 if (!t.getCharacter().matches("\\d")) {
                     t.consume();
                 }
-            }
-        });
-		heightTextField.textProperty().addListener(new ChangeListener<String>() {
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                try {
-                    Integer.parseInt(newValue);
-                } catch (Exception e) {
-                	widthTextField.setText(oldValue);
-               }
             }
         });
 	}
@@ -116,36 +96,37 @@ public class MapPropertiesController extends PropertiesViewController{
 	}
 	
 	private boolean isValidDetails(){
-		if(nameTextField.getText().isEmpty()){
-			new AlertDialog(AlertType.ERROR, "Oops", "", "Name is required.").showAndWait();
-			return false;
+		String errorMessage = "";
+		
+		if(nameTextField.getText() == null || nameTextField.getText().isEmpty()){
+			errorMessage += "Name is required.\n";
 		}
-		if(descriptionTextField.getText().isEmpty()){
-			new AlertDialog(AlertType.ERROR, "Oops", "", "Description is required.").showAndWait();
-			return false;
+		
+		if(descriptionTextField.getText() == null || descriptionTextField.getText().isEmpty()){
+			errorMessage += "Description is required.\n";
 		}
-		if(widthTextField.getText().isEmpty()){
-			new AlertDialog(AlertType.ERROR, "Oops", "", "Width is required.").showAndWait();
-			return false;
+		
+		if(widthTextField.getText() == null || widthTextField.getText().isEmpty()){
+			errorMessage += "Width is required.\n";
+		} else if(Integer.parseInt(widthTextField.getText()) <= 0){
+			errorMessage += "Width should be 1 or greater.\n";
 		}
-		if(heightTextField.getText().isEmpty()){
-			new AlertDialog(AlertType.ERROR, "Oops", "", "Height is required.").showAndWait();
-			return false;
+		
+		if(heightTextField.getText() == null || heightTextField.getText().isEmpty()){
+			errorMessage += "Height is required.\n";
+		} else if(Integer.parseInt(heightTextField.getText()) <= 0){
+			errorMessage += "Height should be 1 or greater.\n";
 		}
-		if(Integer.parseInt(widthTextField.getText()) <= 0){
-			new AlertDialog(AlertType.ERROR, "Oops", "", "Width should be 1 or greater.").showAndWait();
-			return false;
+		
+		if(!errorMessage.isEmpty()){
+			new AlertDialog(AlertType.ERROR, "Oops", "", errorMessage).showAndWait();
 		}
-		if(Integer.parseInt(heightTextField.getText()) <= 0){
-			new AlertDialog(AlertType.ERROR, "Oops", "", "Height should be 1 or greater.").showAndWait();
-			return false;
-		}
-			
-		return true;
+
+		return errorMessage.isEmpty();
 	}
 	
 	private Boolean isValidMap(){
-		if(getMap().getTiles() == null || (getMap().getTiles() != null && getMap().getTiles().isEmpty())){
+		if(getMap().getTiles() == null || getMap().getTiles().isEmpty()){
 			new AlertDialog(AlertType.ERROR, "Oops", "", "Please design your map.").showAndWait();
 			return false;
 		}
@@ -169,13 +150,12 @@ public class MapPropertiesController extends PropertiesViewController{
 			getMap().setHeight(Integer.parseInt(heightTextField.getText()));
 			
 			List<Tile> tiles = new ArrayList<Tile>();
-			for(int r = 0;r < getMap().getHeight();r++){
-				for(int c = 0;c < getMap().getWidth();c++){
+			for (int r = 0; r < getMap().getHeight(); r++) {
+				for (int c = 0; c < getMap().getWidth(); c++) {
 					Tile tile = new Tile();
 					tile.setMap(getMap());
 					tile.setColIndex(c);
 					tile.setRowIndex(r);
-					tile.setObstacle(false);
 					tiles.add(tile);
 				}
 			}
@@ -183,8 +163,6 @@ public class MapPropertiesController extends PropertiesViewController{
 			getMap().setTiles(tiles);
 		}
 	}
-	
-	
 	
 	@FXML
 	private void save(){
