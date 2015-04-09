@@ -14,7 +14,7 @@
    <children>
       <SplitPane fx:id="mapDesignerContainer" dividerPositions="0.29797979797979796" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
         <items>
-          <AnchorPane prefWidth="250.0">
+          <AnchorPane maxWidth="230.0" minWidth="230.0" prefWidth="230.0">
                <children>
                   <ButtonBar prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
                      <buttons>
@@ -27,18 +27,26 @@
                         <Font size="18.0" />
                      </font>
                   </Label>
-                  <Button layoutX="138.0" layoutY="503.0" mnemonicParsing="false" onAction="#uploadTileImage" prefWidth="75.0" styleClass="button-default" text="Add Tile" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="503.0" />
                   <ImageView fx:id="selectedTileImageView" fitHeight="45.0" fitWidth="45.0" layoutX="165.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
                   <VBox layoutX="46.0" layoutY="89.0" prefHeight="350.0" prefWidth="200.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="65.0">
                      <children>
-                        <Label text="Design" />
-                        <FlowPane fx:id="tileImageSelections" minHeight="50.0">
+                        <HBox alignment="BOTTOM_LEFT" prefHeight="27.0" prefWidth="209.0">
+                           <children>
+                              <Label text="Design" />
+                              <Button mnemonicParsing="false" onAction="#uploadTileImage" prefWidth="75.0" styleClass="button-default" text="Add Tile">
+                                 <HBox.margin>
+                                    <Insets left="90.0" />
+                                 </HBox.margin>
+                              </Button>
+                           </children>
+                        </HBox>
+                        <FlowPane fx:id="tileImageSelections" hgap="5.0" minHeight="50.0" vgap="5.0">
                            <VBox.margin>
                               <Insets bottom="10.0" />
                            </VBox.margin>
                         </FlowPane>
                         <Label text="Obstacle" />
-                        <FlowPane fx:id="obstacleImageSelections" minHeight="50.0">
+                        <FlowPane fx:id="obstacleImageSelections" hgap="5.0" minHeight="50.0" vgap="5.0">
                            <VBox.margin>
                               <Insets bottom="10.0" />
                            </VBox.margin>
